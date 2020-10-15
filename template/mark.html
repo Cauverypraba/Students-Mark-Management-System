@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 body {
-  margin: 0;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
@@ -23,6 +22,20 @@ header {
   background-color: #048162c9;
   padding: 20px;
   color: white;
+}
+
+.container {
+  padding: 16px;
+  width: 50%;
+  background-color: white;
+}
+
+.labelPart {
+  width: 60%;
+}
+
+.fieldPart {
+  width: 40% !important;
 }
 
 .topnav {
@@ -55,7 +68,7 @@ header {
 }
 
 input[type=text], input[type=password], input[type=number], select {
-    width: 50%;
+    width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
     display: inline-block;
@@ -82,7 +95,7 @@ input[type=text], input[type=password], input[type=number], select {
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 100%;
+    width: 40%;
     opacity: 0.9;
   }
   
@@ -126,6 +139,10 @@ input[type=text], input[type=password], input[type=number], select {
 </head>
 <body>
 
+<header>
+  <h2>Marks Management System</h2>
+</header>
+
 <div class="topnav" id="myTopnav">
   <a href="/homePage">Home</a>
   <a href="/markPage" class="active">Enter Marks</a>
@@ -139,28 +156,28 @@ input[type=text], input[type=password], input[type=number], select {
 
 <form action="/mark" method="post">
     {% csrf_token %}
-    <div class="container">
-      <h1>Marks Entry</h1>
-      <p>Please fill in this form to create an account.</p>
+    <div class="container"><br>
+      <h1>Marks Entry</h1><br>
+      <p>Please fill in this form to create an account.</p><br>
       <hr>
   
-      <label for="username"><b>Username</b></label>
+      <label class="labelPart" for="username"><b>Username</b></label>
       <!-- <input type="text" placeholder="Enter Username" name="username" id="username" required> -->
-      <select name="username" id="username" required>
+      <select class="fieldPart" name="username" id="username" required>
         {% for student in studNames %}
         <option>{{student.name}}</option>
         {% endfor %}
       </select>
       <br>
   
-      <label for="mark1"><b>Mark:1</b></label>
-      <input type="number" placeholder="Enter mark1" name="mark1" id="mark1" required><br>
+      <label class="labelPart" for="mark1"><b>Mark:1</b></label>
+      <input class="fieldPart" type="number" placeholder="Enter mark1" name="mark1" id="mark1" required><br>
   
-      <label for="mark2"><b>Mark:2</b></label>
-      <input type="number" placeholder="Enter mark2" name="mark2" id="mark2" required><br>
+      <label class="labelPart" for="mark2"><b>Mark:2</b></label>
+      <input class="fieldPart" type="number" placeholder="Enter mark2" name="mark2" id="mark2" required><br>
   
-      <label for="mark3"><b>Mark:3</b></label>
-      <input type="number" placeholder="Enter mark3" name="mark3" id="mark3" required>
+      <label class="labelPart" for="mark3"><b>Mark:3</b></label>
+      <input class="fieldPart" type="number" placeholder="Enter mark3" name="mark3" id="mark3" required>
       <hr>
       <button type="submit" class="submitbtn">Submit</button>
     </div>
