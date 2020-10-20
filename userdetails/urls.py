@@ -24,5 +24,6 @@ urlpatterns=[
             path('homePage',views.homePage,name='home'),
             path('markPage',views.markPage,name='mark'),
             path('mark',views.mark,name='mark'),
-            path('logout',views.logout,name='logout')
+            path('logout',views.logout,name='logout'),
+            path('forgot_password', views.forgot_password,name = 'forgot_password')
             ]

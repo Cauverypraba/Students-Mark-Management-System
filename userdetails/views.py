@@ -17,7 +17,7 @@ def login(request):
     password = request.POST.get('password')
     currStudent = {}
     try:
-        currStudent=user.objects.get(name=username)
+        currStudent = user.objects.get(name=username)
         details = user.objects.filter(category = 'student')
     except ObjectDoesNotExist:
         return render(request,'register.html')
@@ -80,3 +80,6 @@ def logout(request):
     response.delete_cookie('last_connection')
     response.delete_cookie('username')
     return response
+
+def forgot_password(request):
+    return render(request, 'register.html')
