@@ -81,5 +81,5 @@ def logout(request):
     response.delete_cookie('username')
     return response
 
-def forgot_password(request):
-    return render(request, 'register.html')
+def password_reset(request):
+    return render(request, 'password_reset.html')

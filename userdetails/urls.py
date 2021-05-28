@@ -25,5 +25,5 @@ urlpatterns=[
             path('markPage',views.markPage,name='mark'),
             path('mark',views.mark,name='mark'),
             path('logout',views.logout,name='logout'),
-            path('forgot_password', views.forgot_password,name = 'forgot_password')
+            path('password_reset', views.password_reset,name = 'password_reset')
             ]
