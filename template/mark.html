@@ -164,7 +164,7 @@ input[type=text], input[type=password], input[type=number], select {
       <label class="labelPart" for="username"><b>Username</b></label>
       <!-- <input type="text" placeholder="Enter Username" name="username" id="username" required> -->
       <select class="fieldPart" name="username" id="username" required>
-        {% for student in studNames %}
+        {% for student in students_names %}
         <option>{{student.name}}</option>
         {% endfor %}
       </select>

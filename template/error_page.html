@@ -1,0 +1,13 @@
+<!-- error_page.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error Page</title>
+</head>
+<body>
+    <h2>Validation Errors</h2>
+    {% for field, error_msgs in errors.items %}
+        <p>{{ field }}: {{ error_msgs|join:", " }}</p>
+    {% endfor %}
+</body>
+</html>

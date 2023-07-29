@@ -118,18 +118,18 @@ header {
 
 <div class="topnav" id="myTopnav">
   <a href="/homePage" class="active">Home</a>
-  {% if currUser.category == 'faculty' %}
+  {% if current_user.category == 'faculty' %}
   <a href="/markPage">Enter Marks</a>
   {% endif %}
   <a style="float: right" href="/logout">Logout</a>
-  <a style="float: right">Hi, {{currUser.name}}</a>
+  <a style="float: right">Hi, {{current_user.name}}</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
 </div>
 
 <div class="tableContainer">
-  {% if currUser.category == 'student' %}
+  {% if current_user.category == 'student' %}
   <h2>Student Mark table</h2>
   <table id="markList">
     <tr>
@@ -138,12 +138,12 @@ header {
       <th>Mark 3</th>
     </tr>
     <tr>
-      <td>{{currUser.mark1}}</td>
-      <td>{{currUser.mark2}}</td>
-      <td>{{currUser.mark3}}</td>
+      <td>{{current_user.mark1}}</td>
+      <td>{{current_user.mark2}}</td>
+      <td>{{current_user.mark3}}</td>
     </tr>
   </table>
-  {% elif currUser.category == 'faculty' %}
+  {% elif current_user.category == 'faculty' %}
   <h2>Students Detail</h2>
   <table id="markList">
     <tr>

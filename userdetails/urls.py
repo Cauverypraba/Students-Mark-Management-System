@@ -17,13 +17,13 @@ from django.urls import path
 from . import views
 
 urlpatterns=[
-            path('',views.indexPage,name='index'),
+            path('',views.index_page,name='index'),
             path('login',views.login,name='login'),
-            path('signupPage',views.signupPage,name='signup'),
+            path('signupPage',views.signup_page,name='signup'),
             path('register',views.register,name='register'),
-            path('homePage',views.homePage,name='home'),
-            path('markPage',views.markPage,name='mark'),
-            path('mark',views.mark,name='mark'),
+            path('homePage',views.home_page,name='home'),
+            path('markPage',views.mark_page,name='mark'),
+            path('mark',views.update_mark,name='mark'),
             path('logout',views.logout,name='logout'),
             path('password_reset', views.password_reset,name = 'password_reset')
             ]

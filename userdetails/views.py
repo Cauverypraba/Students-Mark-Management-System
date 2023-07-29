@@ -1,85 +1,101 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from .models import user
-from django.contrib.auth import login
-from django.shortcuts import (get_object_or_404,render,HttpResponseRedirect)
-from django.template import RequestContext
+from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 import datetime
-from django.views.generic import ListView
-from django.urls import reverse
+from django.views.decorators.csrf import csrf_protect
+from rest_framework.decorators import api_view
+from .serializers import UserSerializer
 
-def indexPage(request):
+def index_page(request):
+    """
+    Function to main page of the application
+    """
     return render(request, 'index.html')
 
-# Create your views here.
+@csrf_protect 
 def login(request):
+    """
+    Funtion to login and enters inside student details page
+    """
     username = request.POST.get('username')
     password = request.POST.get('password')
-    currStudent = {}
+    current_student = {}
     try:
-        currStudent = user.objects.get(name=username)
-        details = user.objects.filter(category = 'student')
+        current_student = user.objects.get(name=username)
+        # Based on student category get all students details
+        students_details = user.objects.filter(category = 'student')
     except ObjectDoesNotExist:
         return render(request,'register.html')
-    if(currStudent.password == password):
-        response = render(request, 'home.html', {'currUser' : currStudent, 'allDetails': details}) 
+    if(current_student.password == password):
+        response = render(request, 'home.html', {'current_user' : current_student, 'allDetails': students_details}) 
         response.set_cookie('last_connection', datetime.datetime.now())
-        response.set_cookie('username', currStudent.name)
+        response.set_cookie('username', current_student.name)
         return response
-    return render(request,'index.html')
+    return redirect(signup_page)
 
-
-def homePage(request):
+def home_page(request):
+    """
+    Function to render the student details page
+    """
     username = request.COOKIES['username']
-    currUser = user.objects.get(name=username)
-    currdetails = user.objects.filter(category = 'student')
-    return render(request, 'home.html', {'currUser': currUser, 'allDetails': currdetails})
+    current_user = user.objects.get(name=username)
+    students_details = user.objects.filter(category = 'student')
+    return render(request, 'home.html', {'current_user': current_user, 'allDetails': students_details})
 
-def signupPage(request):
+def signup_page(request):
+    """
+    Function to render the register page
+    """
     return render(request,'register.html')
 
+@api_view(['POST'])
 def register(request):
-    # db = student()
-    # db.email = request.POST.get('email')
-    # db.password = request.POST.get('password')
-    # db.re_password = request.POST.get('re_password')
-    # db.save()
-
-    name = request.POST.get('username')
-    email = request.POST.get('email')
-    category = request.POST.get('category')
-    password = request.POST.get('psw')
-    re_password = request.POST.get('psw-repeat')
-    if(password == re_password):
-        db = user(name=name, category=category, email=email, password=password)
-        db.save()
+    """
+    Function to save user's detail in database
+    """
+    serializer = UserSerializer(data=request.data)
+    # Checks data from request is valid and save the data
+    if serializer.is_valid():
+        serializer.save()
         return render(request,'index.html')
-    return render(request,'register.html') 
+    return render(request, 'error_page.html', {'errors': serializer.errors})
 
-def markPage(request):
+def mark_page(request):
+    """
+    Function to just render the student mark detail page
+    """
     username = request.COOKIES['username']
-    studNames = user.objects.filter(category = 'student')
-    return render(request, 'mark.html', {'username': username, 'studNames': studNames})
+    students_names = user.objects.filter(category = 'student')
+    return render(request, 'mark.html', {'username': username, 'students_names': students_names})
 
-def mark(request):
+def update_mark(request):
+    """
+    Function to save/edit the students marks 
+    """
     name = request.POST.get('username')
-    currUser = {}
-    print(name)
+    current_user = {}
     try:
-       currUser = user.objects.get(name =name) 
+       current_user = user.objects.get(name =name) 
     except ObjectDoesNotExist:
         return render(request,'mark.html')
-    currUser.mark1 = request.POST.get('mark1')
-    currUser.mark2 = request.POST.get('mark2')
-    currUser.mark3 = request.POST.get('mark3')
-    currUser.save()
-    return homePage(request)
-    #return render(request,'mark.html',{'currUser':currStudent})  
+    current_user.mark1 = request.POST.get('mark1')
+    current_user.mark2 = request.POST.get('mark2')
+    current_user.mark3 = request.POST.get('mark3')
+    current_user.save()
+    return home_page(request)
+
 def logout(request):
+    """
+    Function to logout from the application and delete the cookie 
+    """
     response = render(request,'index.html')
     response.delete_cookie('last_connection')
     response.delete_cookie('username')
     return response
 
 def password_reset(request):
+    """
+    Function to return password reset page 
+    """
     return render(request, 'password_reset.html')
