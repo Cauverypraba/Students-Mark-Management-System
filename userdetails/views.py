@@ -5,7 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import datetime
 from django.views.decorators.csrf import csrf_protect
 from rest_framework.decorators import api_view
-from .serializers import UserSerializer
+from .serializers import MarkSerializer, UserSerializer
+from django.core.mail import send_mail
 
 def index_page(request):
     """
@@ -69,21 +70,42 @@ def mark_page(request):
     students_names = user.objects.filter(category = 'student')
     return render(request, 'mark.html', {'username': username, 'students_names': students_names})
 
+@api_view(['POST'])
 def update_mark(request):
     """
     Function to save/edit the students marks 
     """
-    name = request.POST.get('username')
-    current_user = {}
+    name = request.POST.get('name')
     try:
-       current_user = user.objects.get(name =name) 
-    except ObjectDoesNotExist:
-        return render(request,'mark.html')
-    current_user.mark1 = request.POST.get('mark1')
-    current_user.mark2 = request.POST.get('mark2')
-    current_user.mark3 = request.POST.get('mark3')
-    current_user.save()
+        student = user.objects.get(name=name)
+    except user.DoesNotExist:
+        return render(request, 'error_page.html', {'errors': serializer.errors})
+
+    if request.method == 'POST':
+        serializer = MarkSerializer(student, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+    email_address = student.email
+    # Call send_student_marks() to send email to the parent containing mark details
+    send_student_marks(name, email_address, serializer.data)
     return home_page(request)
+
+def send_student_marks(student, email_address, data):
+    """
+    Function to send mark details through e-mail
+    """
+    mark1 = data['mark1']
+    mark2 = data['mark2']
+    mark3 = data['mark3']
+    total_score = sum(mark1, mark2, mark3)
+    message = (
+    f"{student} - Annual Exam Marks for 2022-2023",
+    f"Dear Parent\n, Please find the marks of your daughter/son. \nMark-1 : {mark1}\nMark-2 : {mark2}\nMark-3 : {mark3}\nTotal score : {total_score}",
+    "prabasatha221@gmail.com",
+    email_address,
+    )
+
+    send_mail(message, fail_silently=False)
 
 def logout(request):
     """
