@@ -6,8 +6,13 @@
 </head>
 <body>
     <h2>Validation Errors</h2>
-    {% for field, error_msgs in errors.items %}
-        <p>{{ field }}: {{ error_msgs|join:", " }}</p>
-    {% endfor %}
+    {% if errors %}
+        {% for field, error_msgs in errors.items %}
+            <p>{{ field }}: {{ error_msgs|join:", " }}</p>
+        {% endfor %}
+    {% else %}
+        <p>{{custom_response}}</p>
+        <p>{{errors}}</p>
+    {% endif %}
 </body>
 </html>

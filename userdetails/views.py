@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from rest_framework.decorators import api_view
 from .serializers import MarkSerializer, UserSerializer
 from django.core.mail import send_mail
+from django.conf import settings
 
 def index_page(request):
     """
@@ -27,7 +28,7 @@ def login(request):
         # Based on student category get all students details
         students_details = user.objects.filter(category = 'student')
     except ObjectDoesNotExist:
-        return render(request,'register.html')
+        return render(request, 'error_page.html', {'custom_response': 'User does not exist, sign-up before logging in'})
     if(current_student.password == password):
         response = render(request, 'home.html', {'current_user' : current_student, 'allDetails': students_details}) 
         response.set_cookie('last_connection', datetime.datetime.now())
@@ -75,19 +76,21 @@ def update_mark(request):
     """
     Function to save/edit the students marks 
     """
-    name = request.POST.get('name')
-    try:
-        student = user.objects.get(name=name)
-    except user.DoesNotExist:
-        return render(request, 'error_page.html', {'errors': serializer.errors})
-
     if request.method == 'POST':
-        serializer = MarkSerializer(student, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-    email_address = student.email
-    # Call send_student_marks() to send email to the parent containing mark details
-    send_student_marks(name, email_address, serializer.data)
+        name = request.POST.get('name')
+        try:
+            student = user.objects.get(name=name)
+            serializer = MarkSerializer(student, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+            email_address = student.email
+            # Call send_student_marks() to send email containing mark details
+            send_student_marks(name, email_address, serializer.data)
+        except user.DoesNotExist:
+            return render(request, 'error_page.html', {'custom_response': 'Student details does not exist'})
+        except user.MultipleObjectsReturned:
+            return render(request, 'error_page.html', {'custom_response': f'Multiple records found for student: {name}'})
+
     return home_page(request)
 
 def send_student_marks(student, email_address, data):
@@ -97,15 +100,14 @@ def send_student_marks(student, email_address, data):
     mark1 = data['mark1']
     mark2 = data['mark2']
     mark3 = data['mark3']
-    total_score = sum(mark1, mark2, mark3)
-    message = (
-    f"{student} - Annual Exam Marks for 2022-2023",
-    f"Dear Parent\n, Please find the marks of your daughter/son. \nMark-1 : {mark1}\nMark-2 : {mark2}\nMark-3 : {mark3}\nTotal score : {total_score}",
-    "prabasatha221@gmail.com",
-    email_address,
+    total_score = mark1 + mark2 + mark3
+    send_mail(
+        f"{student} - Annual Exam Marks for 2022-2023",
+        f"Dear Parent\n, Please find the marks of your daughter/son. \nMark-1 : {mark1}\nMark-2 : {mark2}\nMark-3 : {mark3}\nTotal score : {total_score}",
+        settings.EMAIL_HOST_USER,
+        [email_address],
+        fail_silently=False
     )
-
-    send_mail(message, fail_silently=False)
 
 def logout(request):
     """
