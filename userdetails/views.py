@@ -79,13 +79,14 @@ def update_mark(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         try:
-            student = user.objects.get(name=name)
-            serializer = MarkSerializer(student, data=request.data, partial=True)
+            user_category = user.objects.get(name=name)
+            print("user>>>>>>>>>>>>", user_category.category)
+            serializer = MarkSerializer(user_category, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-            email_address = student.email
-            # Call send_student_marks() to send email containing mark details
-            send_student_marks(name, email_address, serializer.data)
+                email_address = user_category.email
+                # Call send_student_marks() to send email containing mark details
+                send_student_marks(name, email_address, serializer.data)
         except user.DoesNotExist:
             return render(request, 'error_page.html', {'custom_response': 'Student details does not exist'})
         except user.MultipleObjectsReturned:
@@ -103,7 +104,7 @@ def send_student_marks(student, email_address, data):
     total_score = mark1 + mark2 + mark3
     send_mail(
         f"{student} - Annual Exam Marks for 2022-2023",
-        f"Dear Parent\n, Please find the marks of your daughter/son. \nMark-1 : {mark1}\nMark-2 : {mark2}\nMark-3 : {mark3}\nTotal score : {total_score}",
+        f"Dear Parent\n, Please find the Annual Marks scored by {student}. \nMark-1 : {mark1}\nMark-2 : {mark2}\nMark-3 : {mark3}\nTotal score : {total_score}",
         settings.EMAIL_HOST_USER,
         [email_address],
         fail_silently=False
