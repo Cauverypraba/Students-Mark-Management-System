@@ -36,7 +36,7 @@ This screen displays the details of students with their marks.
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/your-project.git
+    git clone https://github.com/Cauverypraba/Students-Mark-Management-System.git
     ```
 
 2. Create a virtual environment and activate it:
