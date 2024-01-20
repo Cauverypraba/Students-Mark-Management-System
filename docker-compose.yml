@@ -1,7 +1,11 @@
-version: '3'
+version: '3.8'
 
 services:
-  web: 
+  django_gunicorn:
+    volumes:
+      - static:/static
+    env_file:
+      - .env
     build:
         context: .
         dockerfile: Dockerfile
@@ -9,3 +13,4 @@ services:
     image: students-mark-management-system:latest
     ports:
       - '8000:8000'
+    
